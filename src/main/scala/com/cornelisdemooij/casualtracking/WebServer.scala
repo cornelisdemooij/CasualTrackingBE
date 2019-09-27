@@ -20,7 +20,7 @@ object WebServer {
 
   def main(args: Array[String]): Unit = {
     val routes = concat(
-//      DataPointEndpoint.route,
+      DataPointEndpoint.route
 //      DataCollectionEndpoint.route,
 //      PlotEndpoint.route
     )
