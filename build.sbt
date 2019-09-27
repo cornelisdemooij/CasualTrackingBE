@@ -1,4 +1,4 @@
-name := "CasualTracking"
+name := "CasualTrackingBE"
 
 version := "0.1"
 
