@@ -1,7 +1,7 @@
 package com.cornelisdemooij.casualtracking.persistence
 
-import akka.http.scaladsl.model.DateTime
 import com.cornelisdemooij.casualtracking.domain.DataPoint
+import org.joda.time.DateTime
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIOAction
 import slick.jdbc.JdbcProfile
@@ -13,10 +13,11 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
   import config.profile.api._
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def init(): Future[Unit] = db.run(DBIOAction.seq(dataPoints.schema.create))
+  def init(): Future[Unit] = { println("in init"); db.run(DBIOAction.seq(dataPoints.schema.create)) }
   def drop(): Future[Unit] = db.run(DBIOAction.seq(dataPoints.schema.drop))
 
   def insert(dataPoint: DataPoint): Future[DataPoint] = {
+    println("in insert")
     db
       .run(dataPoints returning dataPoints.map(_.id) += dataPoint)
       .map(id => dataPoint.copy(id = Some(id)))
@@ -28,7 +29,7 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
   def update(id: Long, value: Double, moment: DateTime, note: String): Future[Boolean] = {
     val query = for (dataPoint <- dataPoints if dataPoint.id === id)
       yield (dataPoint.value, dataPoint.moment, dataPoint.note)
-    db.run(query.update(value, moment, note)) map { _ > 0 }
+    db.run(query.update((value, moment, Some(note)))) map { _ > 0 }
   }
 
   def delete(id: Long): Future[Boolean] =

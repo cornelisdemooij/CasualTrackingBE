@@ -9,6 +9,6 @@ object DataPointService extends DbConfiguration {
   private val dataPointRepo = new DataPointRepository(config)
   dataPointRepo.init()
 
-  def createDataPoint(dataPoint: DataPoint): Future[DataPoint] = dataPointRepo.insert(dataPoint)
+  def createDataPoint(dataPoint: DataPoint): Future[DataPoint] = { println("in createDataPoint"); dataPointRepo.insert(dataPoint) }
   def getDataPoint(dataPointId: Long): Future[Option[DataPoint]] = dataPointRepo.find(dataPointId)
 }
