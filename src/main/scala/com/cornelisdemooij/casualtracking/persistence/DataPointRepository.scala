@@ -13,11 +13,10 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
   import config.profile.api._
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def init(): Future[Unit] = { println("in init"); db.run(DBIOAction.seq(dataPoints.schema.create)) }
+  def init(): Future[Unit] = db.run(DBIOAction.seq(dataPoints.schema.create))
   def drop(): Future[Unit] = db.run(DBIOAction.seq(dataPoints.schema.drop))
 
   def insert(dataPoint: DataPoint): Future[DataPoint] = {
-    println("in insert")
     db
       .run(dataPoints returning dataPoints.map(_.id) += dataPoint)
       .map(id => dataPoint.copy(id = Some(id)))
