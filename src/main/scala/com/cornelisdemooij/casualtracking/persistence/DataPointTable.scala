@@ -3,7 +3,7 @@ package com.cornelisdemooij.casualtracking.persistence
 import com.cornelisdemooij.casualtracking.domain.DataPoint
 import org.joda.time.DateTime
 
-trait DataPointTable extends DataCollectionTable with CustomMappers { this: Db =>
+trait DataPointTable extends CustomMappers { this: Db =>
   import config.profile.api._
 
   class DataPoints(tag: Tag) extends Table[DataPoint](tag, "dataPoints") {

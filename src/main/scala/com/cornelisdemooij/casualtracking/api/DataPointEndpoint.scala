@@ -22,7 +22,7 @@ object DataPointEndpoint {
       case _ => throw DeserializationException("Error parsing string to date and time. Should be in ISO format.")
     }
   }
-  implicit val dataPointFormat: RootJsonFormat[DataPoint] = jsonFormat4(DataPoint)
+  implicit val dataPointFormat: RootJsonFormat[DataPoint] = jsonFormat5(DataPoint)
 
   def route: Route = concat(
     post {
