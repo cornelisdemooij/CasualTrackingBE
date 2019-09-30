@@ -1,6 +1,6 @@
 package com.cornelisdemooij.casualtracking.persistence
 
-import com.cornelisdemooij.casualtracking.domain.DataPoint
+import com.cornelisdemooij.casualtracking.domain.Entities.DataPoint
 import org.joda.time.DateTime
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIOAction
@@ -9,7 +9,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
 
 class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
-      extends Db with DataPointTable {
+      extends Db with DataPointTable with DataCollectionTable {
   import config.profile.api._
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -24,8 +24,8 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
 
   def find(id: Long): Future[Option[DataPoint]] =
     db.run(dataPoints.filter(_.id === id).result.headOption)
-  def findByDataCollectionId(dataCollectionId: Long): Future[Option[List[DataPoint]]] =
-    db.run(dataPoints.filter(_.dataCollectionId === dataCollectionId).result)
+  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] =
+    db.run(dataCollections.join(dataPoints).on(_.id === _.dataCollectionId).result.flatten)
 
   def update(id: Long, value: Double, moment: DateTime, note: String): Future[Boolean] = {
     val query = for (dataPoint <- dataPoints if dataPoint.id === id)

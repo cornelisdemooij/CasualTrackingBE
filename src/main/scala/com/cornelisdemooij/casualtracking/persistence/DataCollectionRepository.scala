@@ -1,6 +1,6 @@
 package com.cornelisdemooij.casualtracking.persistence
 
-import com.cornelisdemooij.casualtracking.domain.DataCollection
+import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
 import org.joda.time.DateTime
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIOAction
