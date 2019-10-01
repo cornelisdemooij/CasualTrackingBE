@@ -24,8 +24,10 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
 
   def find(id: Long): Future[Option[DataPoint]] =
     db.run(dataPoints.filter(_.id === id).result.headOption)
-  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] =
-    db.run(dataCollections.join(dataPoints).on(_.id === _.dataCollectionId).result.flatten)
+  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] = {
+    println("2")
+    db.run(dataCollections.join(dataPoints).on(_.id === _.dataCollectionId).result.map(_.map(_._2).toList))
+  }
 
   def update(id: Long, value: Double, moment: DateTime, note: String): Future[Boolean] = {
     val query = for (dataPoint <- dataPoints if dataPoint.id === id)
