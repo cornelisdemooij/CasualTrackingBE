@@ -10,34 +10,37 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.util.{Failure, Success}
 
-object DataCollectionEndpoint extends CustomFormats {
+object DataCollectionEndpoint extends CustomFormats with CORSHandler {
   def route: Route = concat(
     post {
-      path("datacollection") {
-        println("in post")
-        entity(as[DataCollection]) { dataCollection =>
-          onComplete(createDataCollection(dataCollection)) {
-            case Success(d) => complete(StatusCodes.Created, s"DataCollection ${d.id} created!")
-            case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating dataCollection failed!")
+      corsHandler(
+        path("datacollection") {
+          entity(as[DataCollection]) { dataCollection =>
+            onComplete(createDataCollection(dataCollection)) {
+              case Success(d) => complete(StatusCodes.Created, s"DataCollection ${d.id} created!")
+              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating dataCollection failed!")
+            }
           }
         }
-      }
+      )
     },
     get {
-      pathPrefix("datacollection" / LongNumber) { id =>
-        val collectionFuture = getDataCollection(id)
-        val dataPointsFuture = getDataPointsInDataCollection(id)
-        val combinedFuture =
-          for {
-            collection <- collectionFuture
-            dataPoints <- dataPointsFuture
-          } yield collection.map(_.copy(dataPointList = Some(dataPoints)))
+      corsHandler(
+        pathPrefix("datacollection" / LongNumber) { id =>
+          val collectionFuture = getDataCollection(id)
+          val dataPointsFuture = getDataPointsInDataCollection(id)
+          val combinedFuture =
+            for {
+              collection <- collectionFuture
+              dataPoints <- dataPointsFuture
+            } yield collection.map(_.copy(dataPointList = Some(dataPoints)))
 
-        onComplete(combinedFuture) {
-          case Success(dataCollection) => complete(dataCollection)
-          case Failure(e)              => println(e); complete(StatusCodes.NotFound)
+          onComplete(combinedFuture) {
+            case Success(dataCollection) => complete(dataCollection)
+            case Failure(e)              => println(e); complete(StatusCodes.NotFound)
+          }
         }
-      }
+      )
     }
   )
 }

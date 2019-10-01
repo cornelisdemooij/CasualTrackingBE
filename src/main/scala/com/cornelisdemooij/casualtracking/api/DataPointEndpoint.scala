@@ -8,26 +8,29 @@ import com.cornelisdemooij.casualtracking.service.DataPointService._
 
 import scala.util.{Failure, Success}
 
-object DataPointEndpoint extends CustomFormats {
+object DataPointEndpoint extends CustomFormats with CORSHandler {
   def route: Route = concat(
     post {
-      path("datapoint") {
-        println("in post")
-        entity(as[DataPoint]) { dataPoint =>
-          onComplete(createDataPoint(dataPoint)) {
-            case Success(d) => complete(StatusCodes.Created, s"DataPoint ${d.id} created!")
-            case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating datapoint failed!")
+      corsHandler (
+        path("datapoint") {
+          entity(as[DataPoint]) { dataPoint =>
+            onComplete(createDataPoint(dataPoint)) {
+              case Success(d) => complete(StatusCodes.Created, s"DataPoint ${d.id} created!")
+              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating datapoint failed!")
+            }
           }
         }
-      }
+      )
     },
     get {
-      pathPrefix("datapoint" / LongNumber) { id =>
-        onSuccess(getDataPoint(id)) {
-          case Some(dataPoint) => complete(dataPoint)
-          case None            => complete(StatusCodes.NotFound)
+      corsHandler(
+        pathPrefix("datapoint" / LongNumber) { id =>
+          onSuccess(getDataPoint(id)) {
+            case Some(dataPoint) => complete(dataPoint)
+            case None            => complete(StatusCodes.NotFound)
+          }
         }
-      }
+      )
     }
   )
 }
