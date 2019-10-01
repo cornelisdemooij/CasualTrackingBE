@@ -16,5 +16,5 @@ trait CustomFormats extends SprayJsonSupport with DefaultJsonProtocol {
     }
   }
   implicit val dataPointFormat: RootJsonFormat[DataPoint] = jsonFormat5(DataPoint)
-  implicit val dataCollectionFormat: RootJsonFormat[DataCollection] = jsonFormat3(DataCollection)
+  implicit val dataCollectionFormat: RootJsonFormat[DataCollection] = jsonFormat4(DataCollection)
 }

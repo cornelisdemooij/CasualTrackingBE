@@ -12,6 +12,6 @@ object Entities {
   // TODO Should be made into a generic class or a trait.
   case class DataCollection(id: Option[Long],
                             name: String,
-                            createdOn: DateTime)//,
-                            //dataPointList: Option[List[DataPoint]])
+                            createdOn: DateTime,
+                            dataPointList: Option[List[DataPoint]])
 }

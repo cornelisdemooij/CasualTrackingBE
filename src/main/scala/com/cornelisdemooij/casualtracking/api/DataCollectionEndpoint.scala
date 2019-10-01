@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Route
 import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
 import com.cornelisdemooij.casualtracking.service.DataCollectionService._
 import com.cornelisdemooij.casualtracking.service.DataPointService._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.util.{Failure, Success}
 
@@ -24,18 +25,17 @@ object DataCollectionEndpoint extends CustomFormats {
     },
     get {
       pathPrefix("datacollection" / LongNumber) { id =>
-        onSuccess(getDataCollection(id)) {
-          case Some(dataCollection) => complete(dataCollection)
-          case None                 => complete(StatusCodes.NotFound)
-        }
-      }
-    },
-    get {
-      println("0")
-      pathPrefix("datacollection" / LongNumber) { id =>
-        onComplete(getDataPointsInDataCollection(id)) {
-          case Success(d) => complete(d)
-          case Failure(e) => println(e); complete(StatusCodes.NotFound)
+        val collectionFuture = getDataCollection(id)
+        val dataPointsFuture = getDataPointsInDataCollection(id)
+        val combinedFuture =
+          for {
+            collection <- collectionFuture
+            dataPoints <- dataPointsFuture
+          } yield collection.map(_.copy(dataPointList = Some(dataPoints)))
+
+        onComplete(combinedFuture) {
+          case Success(dataCollection) => complete(dataCollection)
+          case Failure(e)              => println(e); complete(StatusCodes.NotFound)
         }
       }
     }
