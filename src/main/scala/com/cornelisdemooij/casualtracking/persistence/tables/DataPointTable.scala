@@ -1,6 +1,7 @@
-package com.cornelisdemooij.casualtracking.persistence
+package com.cornelisdemooij.casualtracking.persistence.tables
 
 import com.cornelisdemooij.casualtracking.domain.Entities.DataPoint
+import com.cornelisdemooij.casualtracking.persistence.{CustomMappers, Db}
 import org.joda.time.DateTime
 
 trait DataPointTable extends DataCollectionTable with CustomMappers { this: Db =>

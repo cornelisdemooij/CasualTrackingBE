@@ -33,11 +33,11 @@ object DataCollectionEndpoint extends CustomFormats with CORSHandler {
             for {
               collection <- collectionFuture
               dataPoints <- dataPointsFuture
-            } yield collection.map(_.copy(dataPointList = Some(dataPoints)))
+            } yield collection.map(_.copy(dataPointList = dataPoints))
 
           onComplete(combinedFuture) {
-            case Success(dataCollection) => complete(dataCollection)
-            case Failure(e)              => println(e); complete(StatusCodes.NotFound)
+            case Success(d) => complete(d)
+            case Failure(e) => println(e); complete(StatusCodes.NotFound)
           }
         }
       )

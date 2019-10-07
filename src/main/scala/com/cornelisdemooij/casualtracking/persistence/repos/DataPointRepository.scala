@@ -1,6 +1,8 @@
-package com.cornelisdemooij.casualtracking.persistence
+package com.cornelisdemooij.casualtracking.persistence.repos
 
 import com.cornelisdemooij.casualtracking.domain.Entities.DataPoint
+import com.cornelisdemooij.casualtracking.persistence.Db
+import com.cornelisdemooij.casualtracking.persistence.tables.{DataCollectionTable, DataPointTable}
 import org.joda.time.DateTime
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIOAction
@@ -11,6 +13,7 @@ import scala.concurrent.Future
 class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
       extends Db with DataPointTable with DataCollectionTable {
   import config.profile.api._
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
   def init(): Future[Unit] = db.run(DBIOAction.seq(dataPoints.schema.create))
@@ -24,10 +27,8 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
 
   def find(id: Long): Future[Option[DataPoint]] =
     db.run(dataPoints.filter(_.id === id).result.headOption)
-  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] = {
-    println("2")
+  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] =
     db.run(dataCollections.join(dataPoints).on(_.id === _.dataCollectionId).result.map(_.map(_._2).toList))
-  }
 
   def update(id: Long, value: Double, moment: DateTime, note: String): Future[Boolean] = {
     val query = for (dataPoint <- dataPoints if dataPoint.id === id)

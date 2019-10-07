@@ -1,7 +1,7 @@
 package com.cornelisdemooij.casualtracking.api
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import com.cornelisdemooij.casualtracking.domain.Entities.{DataCollection, DataPoint}
+import com.cornelisdemooij.casualtracking.domain.Entities.{DataCollection, DataPoint, Plot}
 import org.joda.time.DateTime
 import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import spray.json._
@@ -17,4 +17,5 @@ trait CustomFormats extends SprayJsonSupport with DefaultJsonProtocol {
   }
   implicit val dataPointFormat: RootJsonFormat[DataPoint] = jsonFormat5(DataPoint)
   implicit val dataCollectionFormat: RootJsonFormat[DataCollection] = jsonFormat4(DataCollection)
+  implicit val plotFormat: RootJsonFormat[Plot] = jsonFormat4(Plot)
 }

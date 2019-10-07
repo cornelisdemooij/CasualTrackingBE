@@ -1,6 +1,8 @@
-package com.cornelisdemooij.casualtracking.persistence
+package com.cornelisdemooij.casualtracking.persistence.repos
 
 import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
+import com.cornelisdemooij.casualtracking.persistence.Db
+import com.cornelisdemooij.casualtracking.persistence.tables.DataCollectionTable
 import org.joda.time.DateTime
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIOAction
@@ -11,6 +13,7 @@ import scala.concurrent.Future
 class DataCollectionRepository(val config: DatabaseConfig[JdbcProfile])
       extends Db with DataCollectionTable {
   import config.profile.api._
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
   def init(): Future[Unit] = db.run(DBIOAction.seq(dataCollections.schema.create))

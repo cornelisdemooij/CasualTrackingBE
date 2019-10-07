@@ -13,5 +13,15 @@ object Entities {
   case class DataCollection(id: Option[Long],
                             name: String,
                             createdOn: DateTime,
-                            dataPointList: Option[List[DataPoint]])
+                            dataPointList: List[DataPoint])
+  case class Plot(id: Option[Long],
+                  title: String,
+                  createdOn: DateTime,
+                  dataCollectionList: List[DataCollection])
+
+
+  // Helper entities:
+  case class DataCollectionInPlot(id: Option[Long],
+                                  dataCollectionId: Long,
+                                  plotId: Long)
 }

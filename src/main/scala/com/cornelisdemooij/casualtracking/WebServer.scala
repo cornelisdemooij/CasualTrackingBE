@@ -21,8 +21,8 @@ object WebServer {
   def main(args: Array[String]): Unit = {
     val routes = concat(
       DataPointEndpoint.route,
-      DataCollectionEndpoint.route
-//      PlotEndpoint.route
+      DataCollectionEndpoint.route,
+      PlotEndpoint.route
     )
 
     val bindingFuture = Http().bindAndHandle(

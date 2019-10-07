@@ -1,7 +1,8 @@
 package com.cornelisdemooij.casualtracking.service
 
 import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
-import com.cornelisdemooij.casualtracking.persistence.{DataCollectionRepository, DbConfiguration}
+import com.cornelisdemooij.casualtracking.persistence.DbConfiguration
+import com.cornelisdemooij.casualtracking.persistence.repos.DataCollectionRepository
 
 import scala.concurrent.Future
 

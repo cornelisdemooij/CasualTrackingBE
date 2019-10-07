@@ -1,6 +1,7 @@
-package com.cornelisdemooij.casualtracking.persistence
+package com.cornelisdemooij.casualtracking.persistence.tables
 
-import com.cornelisdemooij.casualtracking.domain.Entities.{DataCollection, DataPoint}
+import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
+import com.cornelisdemooij.casualtracking.persistence.{CustomMappers, Db}
 import org.joda.time.DateTime
 
 trait DataCollectionTable extends CustomMappers { this: Db =>
@@ -10,7 +11,7 @@ trait DataCollectionTable extends CustomMappers { this: Db =>
     private type Data = (Option[Long], String, DateTime)
 
     def constructDataCollection: Data => DataCollection = {
-      case (id, name, createdOn) => DataCollection(id, name, createdOn, Some(List.empty))
+      case (id, name, createdOn) => DataCollection(id, name, createdOn, List.empty)
     }
     def extractDataCollection: PartialFunction[DataCollection, Data] = {
       case DataCollection(id, name, createdOn, _) => (id, name, createdOn)
@@ -20,9 +21,6 @@ trait DataCollectionTable extends CustomMappers { this: Db =>
     def id = column[Long]("dataCollection_id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def createdOn = column[DateTime]("createdOn")
-    //val dataPointList: Rep[List[DataPoint]] = Rep(List.empty)
-    //val dataPointListQuery = dataCollections.join(dataPoints)
-    //def dataPointList = dataCollections.join(dataPoints).on(_.id === _.)
 
     // Select:
     def * = (id.?, name, createdOn) <> (constructDataCollection, extractDataCollection.lift)
