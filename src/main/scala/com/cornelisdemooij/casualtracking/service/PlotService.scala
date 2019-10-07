@@ -16,29 +16,13 @@ object PlotService extends DbConfiguration {
   dataCollectionRepo.init()
 
   def createPlot(plot: Plot): Future[Plot] = plotRepo.insert(plot)
-  def getPlot(plotId: Long): Future[Plot] = {
-    val emptyPlotOptionFuture = plotRepo.find(plotId)
-    val dcipsFuture = dataCollectionInPlotRepo.findByPlotId(plotId)
-
-    val dcidsFuture = for {
-        dcips <- dcipsFuture
-      } yield dcips.map(_.dataCollectionId)
-
-    val dcsFuture =
-      for {
-        dcids <- dcidsFuture
-        dataCollections <- Future.traverse(dcids)(dcid => dataCollectionRepo.find(dcid))
-      } yield dataCollections.flatten
-
-    val fullPlotFuture =
-      for {
-        emptyPlot <- emptyPlotOptionFuture flatMap (
-          _.map(plot => Future.successful(plot))
-            .getOrElse(Future.failed(new Exception("Plot not found!")))
-        )
-        dcs <- dcsFuture
-      } yield emptyPlot.copy(dataCollectionList = dcs)
-
-    fullPlotFuture
-  }
+  def getPlot(plotId: Long): Future[Plot] =
+    for {
+      emptyPlot <- plotRepo.find(plotId).flatMap(
+        _.map(plot => Future.successful(plot))
+          .getOrElse(Future.failed(new Exception(s"Plot $plotId not found!")))
+      )
+      dcids <- dataCollectionInPlotRepo.findByPlotId(plotId).map(_.map(_.dataCollectionId))
+      dataCollections <- Future.traverse(dcids)(dcid => dataCollectionRepo.find(dcid))
+    } yield emptyPlot.copy(dataCollectionList = dataCollections.flatten)
 }
