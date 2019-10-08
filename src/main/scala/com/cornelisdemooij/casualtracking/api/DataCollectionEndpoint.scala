@@ -5,8 +5,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.cornelisdemooij.casualtracking.domain.Entities.DataCollection
 import com.cornelisdemooij.casualtracking.service.DataCollectionService._
-import com.cornelisdemooij.casualtracking.service.DataPointService._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.util.{Failure, Success}
 
@@ -27,15 +25,7 @@ object DataCollectionEndpoint extends CustomFormats with CORSHandler {
     get {
       corsHandler(
         pathPrefix("datacollection" / LongNumber) { id =>
-          val collectionFuture = getDataCollection(id)
-          val dataPointsFuture = getDataPointsInDataCollection(id)
-          val combinedFuture =
-            for {
-              collection <- collectionFuture
-              dataPoints <- dataPointsFuture
-            } yield collection.copy(dataPointList = dataPoints)
-
-          onComplete(combinedFuture) {
+          onComplete(getDataCollection(id)) {
             case Success(d) => complete(d)
             case Failure(e) => println(e); complete(StatusCodes.NotFound)
           }

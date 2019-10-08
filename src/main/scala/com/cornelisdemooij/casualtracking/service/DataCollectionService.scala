@@ -15,7 +15,10 @@ object DataCollectionService extends DbConfiguration {
     dataCollectionRepo.insert(dataCollection)
   def getDataCollection(dataCollectionId: Long): Future[DataCollection] =
     dataCollectionRepo.find(dataCollectionId).flatMap {
-      case Some(dc) => Future.successful(dc)
+      case Some(dc) =>
+        for {
+          dataPoints <- DataPointService.getDataPointsInDataCollection(dataCollectionId)
+        } yield dc.copy(dataPointList = dataPoints)
       case None => Future.failed(new Exception(s"Data collection $dataCollectionId not found!"))
     }
 }
