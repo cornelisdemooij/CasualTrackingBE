@@ -15,8 +15,8 @@ object DataPointEndpoint extends CustomFormats with CORSHandler {
         path("datapoint") {
           entity(as[DataPoint]) { dataPoint =>
             onComplete(createDataPoint(dataPoint)) {
-              case Success(d) => complete(StatusCodes.Created, s"DataPoint ${d.id} created!")
-              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating datapoint failed!")
+              case Success(d) => complete(StatusCodes.Created, s"Data point ${d.id} created!")
+              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating data point failed!")
             }
           }
         }
@@ -25,9 +25,9 @@ object DataPointEndpoint extends CustomFormats with CORSHandler {
     get {
       corsHandler(
         pathPrefix("datapoint" / LongNumber) { id =>
-          onSuccess(getDataPoint(id)) {
-            case Some(dataPoint) => complete(dataPoint)
-            case None            => complete(StatusCodes.NotFound)
+          onComplete(getDataPoint(id)) {
+            case Success(d) => complete(d)
+            case Failure(e) => println(e); complete(StatusCodes.NotFound)
           }
         }
       )

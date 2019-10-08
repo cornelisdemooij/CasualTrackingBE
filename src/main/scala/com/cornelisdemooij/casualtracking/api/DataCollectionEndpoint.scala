@@ -17,8 +17,8 @@ object DataCollectionEndpoint extends CustomFormats with CORSHandler {
         path("datacollection") {
           entity(as[DataCollection]) { dataCollection =>
             onComplete(createDataCollection(dataCollection)) {
-              case Success(d) => complete(StatusCodes.Created, s"DataCollection ${d.id} created!")
-              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating dataCollection failed!")
+              case Success(d) => complete(StatusCodes.Created, s"Data collection ${d.id} created!")
+              case Failure(e) => println(e); complete(StatusCodes.InternalServerError, "Creating data collection failed!")
             }
           }
         }
@@ -33,7 +33,7 @@ object DataCollectionEndpoint extends CustomFormats with CORSHandler {
             for {
               collection <- collectionFuture
               dataPoints <- dataPointsFuture
-            } yield collection.map(_.copy(dataPointList = dataPoints))
+            } yield collection.copy(dataPointList = dataPoints)
 
           onComplete(combinedFuture) {
             case Success(d) => complete(d)

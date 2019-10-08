@@ -25,8 +25,7 @@ object PlotEndpoint extends CustomFormats with CORSHandler {
     get {
       corsHandler(
         pathPrefix("plot" / LongNumber) { id =>
-          val collectionFuture = getPlot(id)
-          onComplete(collectionFuture) {
+          onComplete(getPlot(id)) {
             case Success(p) => complete(p)
             case Failure(e) => println(e); complete(StatusCodes.NotFound)
           }
