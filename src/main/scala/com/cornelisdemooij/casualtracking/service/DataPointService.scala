@@ -8,8 +8,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object DataPointService extends DbConfiguration {
-  private val dataCollectionRepo = new DataPointRepository(config)    // TODO: Can be removed? Update: Hmm, findByDataCollectionId in the repo would have to be rewritten
-  dataCollectionRepo.init()
   private val dataPointRepo = new DataPointRepository(config)
   dataPointRepo.init()
 

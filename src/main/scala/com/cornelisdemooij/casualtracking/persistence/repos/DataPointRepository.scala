@@ -11,7 +11,7 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
 
 class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
-      extends Db with DataPointTable with DataCollectionTable {
+      extends Db with DataPointTable {
   import config.profile.api._
 
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,8 +27,8 @@ class DataPointRepository(val config: DatabaseConfig[JdbcProfile])
 
   def find(id: Long): Future[Option[DataPoint]] =
     db.run(dataPoints.filter(_.id === id).result.headOption)
-  def findByDataCollectionId(dataCollectionId: Long): Future[List[DataPoint]] =
-    db.run(dataCollections.join(dataPoints).on(_.id === _.dataCollectionId).result.map(_.map(_._2).toList))
+  def findByDataCollectionId(dcId: Long): Future[List[DataPoint]] =
+    db.run(dataPoints.filter(_.dataCollectionId === dcId).result).map(_.toList)
 
   def update(id: Long, value: Double, moment: DateTime, note: String): Future[Boolean] = {
     val query = for (dataPoint <- dataPoints if dataPoint.id === id)
