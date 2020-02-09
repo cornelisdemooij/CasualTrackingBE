@@ -25,13 +25,15 @@ object WebServer {
       PlotEndpoint.route
     )
 
+    val port = 8081
+
     val bindingFuture = Http().bindAndHandle(
       routes,
       "localhost",
-      8080
+      port
     )
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    println(s"Server online at http://localhost:${port}/\nPress RETURN to stop...")
     StdIn.readLine()  // Let it run until user presses return.
     bindingFuture
       .flatMap(_.unbind())  // Trigger unbinding from the port...
